@@ -93,7 +93,7 @@
     }
     .action-btn:hover { transform: translateX(3px); filter: brightness(1.25); }
     .action-btn:active { transform: scale(0.97); }
-    .action-btn .emoji { font-size: 1.1rem; flex-shrink: 0; }
+    .action-btn .emoji { width: 1.5rem; height: 1.5rem; object-fit: contain; flex-shrink: 0; }
 
     /* 業務日誌 */
     #log-panel {
@@ -144,10 +144,11 @@
       z-index: 2;
     }
     #master-wrap img {
-      height: 146%;
+      height: 190%;
       object-fit: contain;
       object-position: bottom;
-      margin-bottom: -30%;
+      margin-bottom: -70%;
+      margin-right: 8%;
       filter: drop-shadow(0 4px 28px rgba(0,0,0,0.55));
     }
 
@@ -156,18 +157,324 @@
     #chest-zone {
       position: absolute;
       /* 立ち絵エリア内の絶対位置: bottom基準で調整 */
-      bottom: 42%;
-      left: 22%;
-      width: 34%;
-      height: 21%;
-      background: rgba(0, 255, 0, 0.25);
-      border: 2px solid rgba(0, 255, 0, 0.8);
+      bottom: 39%;
+      left: 18%;
+      width: 41%;
+      height: 23%;
+      background: transparent;
+      border: none;
       pointer-events: none;
       z-index: 10;
       border-radius: 4px;
     }
 
-    /* ===== 名前入力オーバーレイ ===== */
+    /* ===== 全身を見るモード ===== */
+    #fullbody-overlay {
+      position: absolute; inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+      pointer-events: none;
+    }
+    #fullbody-overlay.open {
+      display: flex;
+      pointer-events: auto;
+    }
+    #fullbody-img {
+      height: 675px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 32px rgba(0,0,0,0.6));
+    }
+    #fullbody-back {
+      position: absolute;
+      bottom: 18px; right: 18px;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.92rem;
+      color: #f5deb3;
+      background: rgba(20,10,4,0.85);
+      border: 1px solid rgba(212,169,106,0.45);
+      border-radius: 8px;
+      padding: 10px 22px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: filter 0.18s;
+      z-index: 41;
+    }
+    #fullbody-back:hover { filter: brightness(1.25); }
+
+
+    #settings-btn {
+      position: absolute;
+      top: 14px; right: 14px;
+      z-index: 20;
+      background: rgba(20,10,4,0.75);
+      border: 1px solid rgba(212,169,106,0.4);
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: filter 0.18s, opacity 0.35s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #settings-btn:hover { filter: brightness(1.25); }
+    #settings-btn img { width: 1.4rem; height: 1.4rem; object-fit: contain; }
+
+    #settings-menu {
+      position: absolute;
+      top: 52px; right: 14px;
+      z-index: 20;
+      background: rgba(20,10,4,0.92);
+      border: 1px solid rgba(212,169,106,0.35);
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 160px;
+    }
+    #settings-menu.open { display: flex; }
+    .settings-item {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.92rem;
+      color: #f5deb3;
+      padding: 11px 18px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      text-align: left;
+      width: 100%;
+      transition: background 0.15s;
+      border-bottom: 1px solid rgba(212,169,106,0.15);
+    }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-item:hover { background: rgba(212,169,106,0.12); }
+
+
+    /* ===== 感想を送るオーバーレイ ===== */
+    #feedback-overlay {
+      position: absolute; inset: 0;
+      background: rgba(10,6,2,0.88);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100;
+      gap: 20px;
+    }
+    #feedback-overlay.open { display: flex; }
+    #feedback-message {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: #f5e8d0;
+      line-height: 2;
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+    #feedback-note {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.78rem;
+      color: #a8896a;
+      letter-spacing: 0.04em;
+    }
+    #feedback-send {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: #2c1a0e;
+      background: linear-gradient(135deg, #d4a96a, #f5c842);
+      border: none; border-radius: 8px;
+      padding: 11px 32px;
+      cursor: pointer;
+      transition: filter 0.2s;
+      letter-spacing: 0.1em;
+    }
+    #feedback-send:hover { filter: brightness(1.15); }
+    #feedback-cancel {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.88rem;
+      color: #a8896a;
+      background: transparent;
+      border: 1px solid rgba(212,169,106,0.3);
+      border-radius: 8px;
+      padding: 8px 24px;
+      cursor: pointer;
+      transition: filter 0.18s;
+    }
+    #feedback-cancel:hover { filter: brightness(1.25); }
+
+    /* ===== 名前変更オーバーレイ ===== */
+    #rename-overlay {
+      position: absolute; inset: 0;
+      background: rgba(10,6,2,0.88);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100;
+      gap: 18px;
+    }
+    #rename-overlay.open { display: flex; }
+    #rename-overlay p {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.92rem;
+      color: #c8aa88;
+      letter-spacing: 0.05em;
+    }
+    #rename-error {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.8rem;
+      color: #e07070;
+      min-height: 1.2em;
+    }
+    #rename-submit {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: #2c1a0e;
+      background: linear-gradient(135deg, #d4a96a, #f5c842);
+      border: none; border-radius: 8px;
+      padding: 11px 32px;
+      cursor: pointer;
+      transition: filter 0.2s;
+      letter-spacing: 0.1em;
+    }
+    #rename-submit:hover { filter: brightness(1.15); }
+    #rename-cancel {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.88rem;
+      color: #a8896a;
+      background: transparent;
+      border: 1px solid rgba(212,169,106,0.3);
+      border-radius: 8px;
+      padding: 8px 24px;
+      cursor: pointer;
+      transition: filter 0.18s;
+    }
+    #rename-cancel:hover { filter: brightness(1.25); }
+
+
+    #costume-overlay {
+      position: absolute; inset: 0;
+      background: transparent;
+      display: none;
+      z-index: 50;
+    }
+    #costume-overlay.open { display: block; }
+
+    /* 左側の衣装選択パネル */
+    #costume-panel {
+      position: absolute;
+      top: 50%;
+      left: 18px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      width: 200px;
+    }
+    #costume-panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: #d4a96a;
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: 4px;
+      text-shadow: 0 0 10px rgba(212,169,106,0.5);
+    }
+    .costume-btn {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.9rem;
+      color: #f5deb3;
+      background: rgba(20,10,4,0.85);
+      border: 1px solid rgba(212,169,106,0.35);
+      border-radius: 9px;
+      padding: 11px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s;
+      backdrop-filter: blur(6px);
+      letter-spacing: 0.05em;
+    }
+    .costume-btn:hover { filter: brightness(1.25); transform: translateX(3px); }
+    .costume-btn.selected {
+      border-color: rgba(212,169,106,0.9);
+      background: rgba(212,169,106,0.18);
+      color: #f5c842;
+    }
+    #costume-close {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.85rem;
+      color: #a8896a;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(212,169,106,0.25);
+      border-radius: 8px;
+      padding: 9px 16px;
+      cursor: pointer;
+      text-align: center;
+      transition: filter 0.18s;
+      margin-top: 4px;
+    }
+    #costume-close:hover { filter: brightness(1.25); }
+
+
+    /* ===== 感想を送るオーバーレイ ===== */
+    #feedback-overlay {
+      position: absolute; inset: 0;
+      background: rgba(10,6,2,0.88);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100;
+      gap: 16px;
+    }
+    #feedback-overlay.open { display: flex; }
+    #feedback-msg {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: #f5deb3;
+      line-height: 2;
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+    #feedback-msg .hashtag {
+      color: #f5c842;
+      font-weight: 600;
+    }
+    #feedback-note {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.78rem;
+      color: #a8896a;
+      letter-spacing: 0.04em;
+    }
+    #feedback-submit {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: #2c1a0e;
+      background: linear-gradient(135deg, #d4a96a, #f5c842);
+      border: none; border-radius: 8px;
+      padding: 11px 32px;
+      cursor: pointer;
+      transition: filter 0.2s;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      display: inline-block;
+    }
+    #feedback-submit:hover { filter: brightness(1.15); }
+    #feedback-close {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 0.88rem;
+      color: #a8896a;
+      background: transparent;
+      border: 1px solid rgba(212,169,106,0.3);
+      border-radius: 8px;
+      padding: 8px 24px;
+      cursor: pointer;
+      transition: filter 0.18s;
+    }
+    #feedback-close:hover { filter: brightness(1.25); }
+
+
     #name-overlay {
       position: absolute; inset: 0;
       background: rgba(10,6,2,0.88);
@@ -177,6 +484,7 @@
       z-index: 100;
       gap: 22px;
     }
+    #name-overlay.hidden { display: none; }
     #name-overlay h2 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2rem;
@@ -328,6 +636,63 @@
   </div>
 
 
+  <!-- 設定ボタン -->
+  <button id="settings-btn" onclick="toggleSettingsMenu()">
+    <img src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/icon6.png" alt="設定">
+  </button>
+  <!-- 設定メニュー -->
+  <div id="settings-menu">
+    <button class="settings-item" onclick="settingsChangeName()">名前の変更</button>
+    <button class="settings-item" onclick="toggleUI()">UI非表示</button>
+    <button class="settings-item" onclick="settingsCostume()">衣装変更</button>
+    <button class="settings-item" onclick="settingsFullBody()">全身を見る</button>
+    <button class="settings-item" onclick="settingsFeedback()">感想を送る</button>
+  </div>
+
+  <!-- 全身を見るオーバーレイ -->
+  <div id="fullbody-overlay">
+    <img id="fullbody-img" src="" alt="立ち絵全身">
+    <button id="fullbody-back" onclick="closeFullBody()">戻る</button>
+  </div>
+
+  <!-- 衣装変更オーバーレイ -->
+  <div id="costume-overlay">
+    <div id="costume-panel">
+      <div id="costume-panel-title">✦ 衣装変更 ✦</div>
+      <button class="costume-btn selected" onclick="selectCostume('A')">通常衣装</button>
+      <button class="costume-btn" onclick="selectCostume('B')">エプロンなし</button>
+      <button class="costume-btn" onclick="selectCostume('C')">ジレなし</button>
+      <button class="costume-btn" onclick="selectCostume('D')">エプロン+ジレなし</button>
+      <button class="costume-btn" onclick="selectCostume('E')">ワイシャツなし</button>
+      <button id="costume-close" onclick="closeCostumeOverlay()">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 名前変更オーバーレイ -->
+  <div id="rename-overlay">
+    <p>変更後のプレイヤー名を入力してください(6文字以内)</p>
+    <input id="rename-input" type="text" maxlength="6" placeholder="名前を入力" autocomplete="off"
+      style="font-family:'Noto Serif JP',serif;font-size:1.2rem;color:#f5deb3;background:rgba(30,15,5,0.9);border:1px solid rgba(212,169,106,0.5);border-radius:8px;padding:12px 20px;text-align:center;outline:none;width:240px;letter-spacing:0.12em;">
+    <div id="rename-error"></div>
+    <button id="rename-submit" onclick="submitRename()">変更する</button>
+    <button id="rename-cancel" onclick="closeRenameOverlay()">キャンセル</button>
+  </div>
+
+  <!-- 感想を送るオーバーレイ -->
+  <div id="feedback-overlay">
+    <p id="feedback-message">
+      このゲームのご感想やご意見があれば<br>
+      下のボタンの「感想を送る」から<br>
+      #if鈴ゲーム<br>
+      をつけて送ってください！<br>
+      とても励みになりますので<br>
+      送ってくださると嬉しいです！
+    </p>
+    <p id="feedback-note">「感想を送る」をクリックするとマシュマロに飛びます</p>
+    <a id="feedback-send" href="https://marshmallow-qa.com/isuzu_kyo?t=6IyATk&utm_medium=url_text&utm_source=promotion" target="_blank" onclick="document.getElementById('feedback-overlay').classList.remove('open')" style="display:inline-block;font-family:'Noto Serif JP',serif;font-size:1rem;color:#2c1a0e;background:linear-gradient(135deg,#d4a96a,#f5c842);border:none;border-radius:8px;padding:11px 32px;cursor:pointer;text-decoration:none;letter-spacing:0.1em;transition:filter 0.2s;">感想を送る</a>
+    <button id="feedback-cancel" onclick="document.getElementById('feedback-overlay').classList.remove('open')">閉じる</button>
+  </div>
+
   <!-- 左サイドバー -->
   <div id="sidebar">
     <!-- 好感度 -->
@@ -345,11 +710,11 @@
 
     <!-- アクション -->
     <div id="actions">
-      <button class="action-btn" onclick="handleAction(0)"><span class="emoji">🧹</span>仕事を手伝う</button>
-      <button class="action-btn" onclick="handleAction(1)"><span class="emoji">🍵</span>休憩をする</button>
-      <button class="action-btn" onclick="handleAction(2)"><span class="emoji">💬</span>話しかける</button>
-      <button class="action-btn" onclick="handleAction(3)"><span class="emoji">🎁</span>プレゼントをする</button>
-      <button class="action-btn" onclick="handleAction(4)"><span class="emoji">❓</span>質問する</button>
+      <button class="action-btn" onclick="handleAction(0)"><img class="emoji" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/icon1.png" alt="仕事">仕事を手伝う</button>
+      <button class="action-btn" onclick="handleAction(1)"><img class="emoji" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/icon2.png" alt="休憩">休憩をする</button>
+      <button class="action-btn" onclick="handleAction(2)"><img class="emoji" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/icon3.png" alt="話す">話しかける</button>
+      <button class="action-btn" onclick="handleAction(3)"><img class="emoji" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/icon4.png" alt="プレゼント">プレゼントをする</button>
+      <button class="action-btn" onclick="handleAction(4)"><img class="emoji" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/icon5.png" alt="質問">質問する</button>
     </div>
 
     <!-- 業務日誌 -->
@@ -362,7 +727,7 @@
   <!-- 立ち絵 (タップでマスターのセリフ) -->
   <div id="master-wrap" onclick="handleMasterClick(event)">
     <div id="chest-zone"></div>
-    <img id="master-img" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/character1.png" alt="鈴マスター">
+    <img id="master-img" src="https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/characterA1.png" alt="鈴マスター">
   </div>
 
   <!-- タップヒント -->
@@ -646,8 +1011,9 @@ function typeText(text, el, speed) {
 }
 
 const BASE_URL = 'https://raw.githubusercontent.com/isuzukyo/ifsuzu_game/main/';
+let currentCostume = 'A';
 function changeCharacter(num) {
-  document.getElementById('master-img').src = BASE_URL + 'character' + num + '.png';
+  document.getElementById('master-img').src = BASE_URL + 'character' + currentCostume + num + '.png';
 }
 
 function resolveName(t){return t.replace(/{NAME}/g,playerName);}
@@ -685,9 +1051,10 @@ function submitName() {
     errEl.textContent = '6文字以内で入力してください。';
     return;
   }
+  errEl.textContent = '';
   playerName = name;
   document.getElementById('master-name').textContent = name;
-  document.getElementById('name-overlay').style.display = 'none';
+  document.getElementById('name-overlay').classList.add('hidden');
 }
 
 // Enterキーでも送信
@@ -695,9 +1062,18 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('name-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') submitName();
   });
+  document.getElementById('rename-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitRename();
+  });
 });
 
 function handleMasterClick(e) {
+  // UI非表示中なら復元して終了
+  if (uiHidden) {
+    toggleUI();
+    return;
+  }
+
   // 初回タップ（アクションボタン未使用）なら自己紹介セリフ
   if (!firstTapDone && !actionUsed) {
     firstTapDone = true;
@@ -734,11 +1110,11 @@ function handleTap() {
 function handleAction(index) {
   actionUsed = true;
   const ACTIONS = ["仕事を手伝う", "休憩をする", "話しかける", "プレゼントをする", "質問する"];
-  const EMOJIS  = ["🧹", "🍵", "💬", "🎁", "❓"];
+  const ICONS   = [1, 2, 3, 4, 5];
   const BASE_GAINS = [1.5, 0.9, 1.25, 2.25, 1.0];
 
   const actionName = ACTIONS[index];
-  const emoji      = EMOJIS[index];
+  const iconNum    = ICONS[index];
   const base       = BASE_GAINS[index];
   // 0.5倍〜2倍のランダム係数
   const mult = 0.5 + Math.random() * 1.5;
@@ -757,7 +1133,7 @@ function handleAction(index) {
 
   // 日誌をクリアして今回分のみ表示
   clearLog();
-  addLog(emoji + ' <b>' + actionName + '</b>');
+  addLog('<img src="' + BASE_URL + 'icon' + iconNum + '.png" style="width:1.1rem;height:1.1rem;object-fit:contain;vertical-align:middle;margin-right:4px;"> <b>' + actionName + '</b>');
   addLog('<span class="log-player">' + resolveName(pair[1]) + '</span>');
   addLog('<span class="log-affinity">好感度 +' + gain + ' → ' + affinity + ' / 100</span>');
   if (newLevel.label !== prevLevel) {
@@ -765,20 +1141,141 @@ function handleAction(index) {
   }
 }
 
-// hキーでUI非表示トグル
-let uiHidden = false;
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'h' || e.key === 'H') {
-    uiHidden = !uiHidden;
-    const sidebar = document.getElementById('sidebar');
-    const msgBox  = document.getElementById('msg-box');
-    const tapHint = document.getElementById('tap-hint');
-    sidebar.style.opacity  = uiHidden ? '0' : '1';
-    sidebar.style.pointerEvents = uiHidden ? 'none' : '';
-    msgBox.style.opacity   = uiHidden ? '0' : '1';
-    msgBox.style.pointerEvents = uiHidden ? 'none' : 'auto';
-    tapHint.style.opacity  = uiHidden ? '0' : '';
+// 設定メニュー開閉
+function toggleSettingsMenu() {
+  const menu = document.getElementById('settings-menu');
+  menu.classList.toggle('open');
+}
+// メニュー外クリックで閉じる
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('settings-menu');
+  const btn  = document.getElementById('settings-btn');
+  if (!menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
   }
+});
+
+// 各メニュー項目（UI非表示以外は仮）
+function settingsChangeName() {
+  document.getElementById('settings-menu').classList.remove('open');
+  document.getElementById('rename-input').value = '';
+  document.getElementById('rename-error').textContent = '';
+  document.getElementById('rename-overlay').classList.add('open');
+}
+function closeRenameOverlay() {
+  document.getElementById('rename-overlay').classList.remove('open');
+}
+function submitRename() {
+  const input = document.getElementById('rename-input');
+  const errEl = document.getElementById('rename-error');
+  const name = input.value.trim();
+  if (name.length === 0) {
+    closeRenameOverlay();
+    return;
+  }
+  playerName = name;
+  document.getElementById('master-name').textContent = name;
+  closeRenameOverlay();
+}
+function settingsCostume() {
+  document.getElementById('settings-menu').classList.remove('open');
+  document.getElementById('sidebar').style.opacity = '0';
+  document.getElementById('sidebar').style.pointerEvents = 'none';
+  document.getElementById('msg-box').style.opacity = '0';
+  document.getElementById('msg-box').style.pointerEvents = 'none';
+  document.getElementById('tap-hint').style.visibility = 'hidden';
+  document.getElementById('settings-btn').style.opacity = '0';
+  document.getElementById('settings-btn').style.pointerEvents = 'none';
+  document.getElementById('costume-overlay').classList.add('open');
+  document.querySelectorAll('.costume-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + currentCostume + "'"));
+  });
+}
+function closeCostumeOverlay() {
+  document.getElementById('costume-overlay').classList.remove('open');
+  if (!uiHidden) {
+    document.getElementById('sidebar').style.opacity = '1';
+    document.getElementById('sidebar').style.pointerEvents = '';
+    document.getElementById('msg-box').style.opacity = '';
+    document.getElementById('msg-box').style.pointerEvents = '';
+    document.getElementById('tap-hint').style.visibility = '';
+    document.getElementById('settings-btn').style.opacity = '1';
+    document.getElementById('settings-btn').style.pointerEvents = '';
+  }
+}
+function selectCostume(costume) {
+  currentCostume = costume;
+  // selected状態を更新
+  document.querySelectorAll('.costume-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.getAttribute('onclick').includes("'" + costume + "'"));
+  });
+  // 現在表示中の立ち絵の表情番号を維持しつつ衣装だけ切り替え
+  const src = document.getElementById('master-img').src;
+  const match = src.match(/character[A-E](\d+)\.png/);
+  const num = match ? match[1] : '1';
+  document.getElementById('master-img').src = BASE_URL + 'character' + currentCostume + num + '.png';
+}
+function settingsFullBody() {
+  document.getElementById('settings-menu').classList.remove('open');
+  const currentSrc = document.getElementById('master-img').src;
+  document.getElementById('fullbody-img').src = currentSrc;
+  document.getElementById('sidebar').style.opacity = '0';
+  document.getElementById('sidebar').style.pointerEvents = 'none';
+  document.getElementById('msg-box').style.opacity = '0';
+  document.getElementById('msg-box').style.pointerEvents = 'none';
+  document.getElementById('tap-hint').style.visibility = 'hidden';
+  document.getElementById('settings-btn').style.opacity = '0';
+  document.getElementById('settings-btn').style.pointerEvents = 'none';
+  document.getElementById('master-wrap').style.opacity = '0';
+  document.getElementById('master-wrap').style.pointerEvents = 'none';
+  document.getElementById('fullbody-overlay').classList.add('open');
+}
+function closeFullBody() {
+  document.getElementById('fullbody-overlay').classList.remove('open');
+  if (!uiHidden) {
+    document.getElementById('sidebar').style.opacity = '1';
+    document.getElementById('sidebar').style.pointerEvents = '';
+    document.getElementById('msg-box').style.opacity = '';
+    document.getElementById('msg-box').style.pointerEvents = '';
+    document.getElementById('tap-hint').style.visibility = '';
+    document.getElementById('settings-btn').style.opacity = '1';
+    document.getElementById('settings-btn').style.pointerEvents = '';
+  }
+  document.getElementById('master-wrap').style.opacity = '1';
+  document.getElementById('master-wrap').style.pointerEvents = '';
+}
+function settingsFeedback() {
+  document.getElementById('settings-menu').classList.remove('open');
+  document.getElementById('feedback-overlay').classList.add('open');
+}
+
+// UI非表示トグル
+let uiHidden = false;
+function toggleUI() {
+  document.getElementById('settings-menu').classList.remove('open');
+  uiHidden = !uiHidden;
+  const sidebar     = document.getElementById('sidebar');
+  const msgBox      = document.getElementById('msg-box');
+  const tapHint     = document.getElementById('tap-hint');
+  const settingsBtn = document.getElementById('settings-btn');
+  sidebar.style.opacity       = uiHidden ? '0' : '1';
+  sidebar.style.pointerEvents = uiHidden ? 'none' : '';
+  settingsBtn.style.opacity       = uiHidden ? '0' : '1';
+  settingsBtn.style.pointerEvents = uiHidden ? 'none' : '';
+  // tap-hintはdisplay:noneで隠れている場合があるのでvisibilityで制御
+  tapHint.style.visibility = uiHidden ? 'hidden' : '';
+  if (uiHidden) {
+    msgBox.style.opacity       = '0';
+    msgBox.style.pointerEvents = 'none';
+  } else {
+    msgBox.style.opacity       = '';
+    msgBox.style.pointerEvents = '';
+  }
+}
+
+// hキーでもトグル
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'h' || e.key === 'H') toggleUI();
 });
 </script>
 <script>
